@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nuyra Swanson | Software developer</title>
+<meta name="description" content="Portfolio of Nuyra Swanson, a final-year software development student building an IoT biometric attendance system, an AI travel chatbot and a SaaS platform for service businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Newsreader:opsz,wght@6..72,300..700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🔐</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="mark" href="#top">Nuyra Swanson</a>
+    <nav class="nav" aria-label="Main">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch between light and dark theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="hero" aria-labelledby="hero-title">
+    <canvas id="print" aria-hidden="true"></canvas>
+    <div class="wrap hero-inner">
+      <h1 id="hero-title"><span>Nuyra</span><span>Swanson</span></h1>
+      <p class="hero-lede">Final-year software development student. I build systems where code meets something physical or personal: a fingerprint at a door, a traveller with a question, a business owner with a full diary.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="#work">See the work</a>
+        <a class="btn btn-line" href="https://github.com/NuyraSwanson" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-line" href="https://www.linkedin.com/in/nuyra-swanson-301621322/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <p class="hero-hint">Move across the print</p>
+  </section>
+
+  <section class="section" id="work" aria-labelledby="work-title">
+    <div class="wrap">
+      <h2 class="section-title" id="work-title">Selected work</h2>
+
+      <div class="projects">
+
+        <!-- Project 1 -->
+        <article class="project" aria-labelledby="p1">
+          <div class="project-copy">
+            <h3 id="p1">IoT biometric attendance system</h3>
+            <p>A fingerprint-based attendance system built on IoT hardware. Someone places a finger on the reader, the device identifies them, and their attendance is logged. No sign-in sheets, and no signing in for a friend.</p>
+            <ul class="tags"><li>IoT</li><li>Biometrics</li><li>Automatic logging</li></ul>
+            <p class="try">Try it: place a finger on the reader.</p>
+          </div>
+          <div>
+            <div class="stage stage--mint">
+              <div class="reader-device">
+                <div class="reader">
+                  <button class="print-btn" id="printBtn" type="button" aria-label="Place a finger on the reader">
+                    <svg viewBox="0 0 120 156" aria-hidden="true"><g id="printRings"></g></svg>
+                    <span class="beam"></span>
+                  </button>
+                  <p class="reader-status" id="readerStatus" role="status" aria-live="polite">Ready. Place a finger.</p>
+                </div>
+                <div class="log">
+                  <h4><span>Attendance log</span><span id="presentCount">0 present</span></h4>
+                  <ul id="logList"><li class="empty">Nobody has checked in yet.</li></ul>
+                </div>
+              </div>
+            </div>
+            <p class="stage-note">Simulated readings and names.</p>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project project--flip" aria-labelledby="p2">
+          <div class="project-copy">
+            <h3 id="p2">Mzansi Travel AI chatbot</h3>
+            <p>A conversational travel assistant for exploring South Africa. Ask in plain language, and get ideas for where to go, when to travel and how to spend your days.</p>
+            <ul class="tags"><li>AI chatbot</li><li>Travel planning</li><li>South Africa</li></ul>
+            <p class="try">Try it: pick a question.</p>
+          </div>
+          <div>
+            <div class="stage stage--coral">
+              <div class="chat">
+                <div class="chat-head">
+                  <div class="avatar" aria-hidden="true">M</div>
+                  <div><strong>Mzansi Travel</strong><span>Your South Africa trip planner</span></div>
+                </div>
+                <div class="messages" id="messages" role="log" aria-live="polite">
+                  <div class="msg bot"><p>Sawubona! Where in South Africa are you headed? Pick a question below to see how I answer.</p></div>
+                </div>
+                <div class="suggest" id="suggest"></div>
+              </div>
+            </div>
+            <p class="stage-note">Scripted preview with sample answers.</p>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project" aria-labelledby="p3">
+          <div class="project-copy">
+            <h3 id="p3">FlowDesk</h3>
+            <p>A modern SaaS platform that helps service-based businesses manage bookings, customers, staff, services and daily operations from one dashboard.</p>
+            <ul class="tags"><li>SaaS</li><li>Dashboard</li><li>Bookings</li><li>Operations</li></ul>
+            <p class="try">Try it: switch tabs, then click a booking status.</p>
+          </div>
+          <div>
+            <div class="stage stage--violet">
+              <div class="flow">
+                <div class="flow-top"><span class="flow-logo">FlowDesk</span><span class="flow-date">Today</span></div>
+                <div class="flow-body">
+                  <div class="flow-tabs" role="tablist" aria-label="FlowDesk sections" id="flowTabs">
+                    <button role="tab" id="tab-bookings" aria-selected="true" aria-controls="flowPanel" data-tab="bookings">Bookings</button>
+                    <button role="tab" id="tab-customers" aria-selected="false" aria-controls="flowPanel" data-tab="customers" tabindex="-1">Customers</button>
+                    <button role="tab" id="tab-staff" aria-selected="false" aria-controls="flowPanel" data-tab="staff" tabindex="-1">Staff</button>
+                    <button role="tab" id="tab-services" aria-selected="false" aria-controls="flowPanel" data-tab="services" tabindex="-1">Services</button>
+                  </div>
+                  <div class="flow-panel" id="flowPanel" role="tabpanel" aria-labelledby="tab-bookings"></div>
+                </div>
+              </div>
+            </div>
+            <p class="stage-note">Sample data for a salon and spa.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="wrap about">
+      <div>
+        <h2 class="sr-only" id="about-title">About</h2>
+        <p class="about-statement">I'm drawn to software that has to work in the real world: on a door, in a conversation, in the middle of someone's busy day.</p>
+      </div>
+      <div class="about-body">
+        <p>I'm in my final year of studying software development. My three main projects come from the same curiosity: reading a fingerprint with hardware, building a travel guide people can talk to, and designing the tool a small business runs its day from.</p>
+        <p>I'm looking for the next set of problems to work on.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section contact" id="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <h2 class="section-title" id="contact-title">Let's talk.</h2>
+      <p class="lead">I'm finishing my final year and open to conversations about what comes next. The best places to reach me are below.</p>
+      <div class="links">
+        <a href="https://github.com/NuyraSwanson" target="_blank" rel="noopener"><span class="name">GitHub</span><span class="handle">github.com/NuyraSwanson</span></a>
+        <a href="https://www.linkedin.com/in/nuyra-swanson-301621322/" target="_blank" rel="noopener"><span class="name">LinkedIn</span><span class="handle">linkedin.com/in/nuyra-swanson-301621322</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><span>&copy; 2026 Nuyra Swanson</span><span>Designed and built by hand in HTML, CSS and JavaScript.</span></div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
