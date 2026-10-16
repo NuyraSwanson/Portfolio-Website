@@ -358,3 +358,210 @@
   });
   render();
 })();
+
+/* ---------- Contact form ---------- */
+(function () {
+  var EMAIL = 'nuyraswan@gmail.com';
+  // Optional: to have messages land in your inbox without opening the visitor's email app,
+  // create a free form at formspree.io (or a similar service) and paste its URL here.
+  var FORM_ENDPOINT = '';
+
+  var form = document.getElementById('contactForm');
+  var status = document.getElementById('formStatus');
+  if (!form) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = document.getElementById('cfName').value.trim();
+    var from = document.getElementById('cfEmail').value.trim();
+    var msg = document.getElementById('cfMsg').value.trim();
+    if (!name || !from || !msg) { status.textContent = 'Please fill in all three fields.'; return; }
+
+    if (FORM_ENDPOINT) {
+      status.textContent = 'Sending...';
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, email: from, message: msg })
+      }).then(function (r) {
+        if (!r.ok) throw new Error('failed');
+        form.reset();
+        status.textContent = 'Thanks, ' + name + '. Your message has been sent.';
+      }).catch(function () {
+        status.textContent = 'That did not send. Please email ' + EMAIL + ' directly.';
+      });
+      return;
+    }
+
+    var subject = 'Portfolio message from ' + name;
+    var body = msg + '\n\n' + name + '\n' + from;
+    window.location.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    status.textContent = 'Your email app should open with the message ready to send. If nothing opens, email ' + EMAIL + ' directly.';
+  });
+})();
+
+/* ---------- Ask-about-Nuyra chatbot (answers from the facts on this site) ---------- */
+(function () {
+  var root = document.getElementById('ask');
+  var launch = document.getElementById('askLaunch');
+  var panel = document.getElementById('askPanel');
+  var closeBtn = document.getElementById('askClose');
+  var box = document.getElementById('askMessages');
+  var chips = document.getElementById('askSuggest');
+  var form = document.getElementById('askForm');
+  var input = document.getElementById('askInput');
+  if (!root) return;
+
+  var EMAIL = 'nuyraswan@gmail.com';
+  var L = {
+    mail: { label: 'Email Nuyra', href: 'mailto:' + EMAIL },
+    form: { label: 'Contact form', href: '#contact' },
+    github: { label: 'GitHub', href: 'https://github.com/NuyraSwanson' },
+    linkedin: { label: 'LinkedIn', href: 'https://www.linkedin.com/in/nuyra-swanson-301621322/' },
+    work: { label: 'See her work', href: '#work' },
+    skills: { label: 'See her skills', href: '#skills' },
+    tonewise: { label: 'ToneWise code', href: 'https://github.com/NuyraSwanson/ToneWise' },
+    tonelive: { label: 'Open ToneWise', href: 'https://tonewise.ai.studio/' },
+    care: { label: 'Visit CareConnect', href: 'https://care-connect-delta-puce.vercel.app/' },
+    enrol: { label: 'Enrollment system code', href: 'https://github.com/NuyraSwanson/EnrollmentSystem' }
+  };
+
+  var skillMap = [
+    ['Java and Java Swing', /\bjava\b|swing/], ['HTML', /\bhtml\b/], ['CSS', /\bcss\b/], ['JavaScript', /\b(javascript|js)\b/],
+    ['SQL', /\bsql\b/], ['MySQL', /mysql/], ['JDBC database integration', /jdbc/], ['SQL database design', /database design|data model/],
+    ['Visual Studio Code', /vs ?code|visual studio/], ['NetBeans', /netbeans/], ['IntelliJ IDEA', /intellij/], ['MySQL Workbench', /workbench/],
+    ['Git and GitHub', /\bgit\b|github/], ['Spring Boot', /spring/], ['REST API integration', /\brest\b/],
+    ['Client-server architecture', /client.?server/], ['Input validation', /validation/], ['Secure coding practices', /secure cod/],
+    ['Object-oriented programming', /\boop\b|object.?oriented/]
+  ];
+  var otherTech = /\b(python|react|angular|vue|php|c#|c\+\+|node|docker|aws|azure|kotlin|swift|flutter|power ?bi|excel|tableau|django|laravel|golang|rust|ruby|typescript|vb\.?net|tailwind|vite|agile)\b/;
+
+  var intents = [
+    { re: /^(hi|hello|hey|sawubona|molo|howzit|good (morning|afternoon|evening))\b/,
+      a: { t: 'Hi! I can tell you about Nuyra\'s studies, projects and skills, and how to reach her. What would you like to know?' } },
+    { re: /\b(thanks|thank you|cheers|appreciate)\b/,
+      a: { t: 'You\'re welcome! If you\'d like to speak to Nuyra directly, the contact form is further down this page.', l: [L.form] } },
+    { re: /(are you (a |an )?(bot|ai|human|real|robot)|who (made|built|created) you|are you chatgpt|are you claude)/,
+      a: { t: 'I\'m a small assistant built into this site. I answer from what\'s published here, so for anything else it\'s best to contact Nuyra directly.', l: [L.form, L.mail] } },
+    { re: /(how|what).*(site|website|page).*(built|made|coded|written)|built this (site|website)/,
+      a: { t: 'This site is hand-built with HTML, CSS and JavaScript, with no frameworks.' } },
+    { re: /github/, a: { t: 'Nuyra\'s code is on GitHub, including ToneWise and EnrollmentSystem.', l: [L.github] } },
+    { re: /linkedin/, a: { t: 'You can find Nuyra on LinkedIn here.', l: [L.linkedin] } },
+    { re: /\b(cv|resume|résumé|curriculum)\b/,
+      a: { t: 'A CV isn\'t available to download on this site. You can ask Nuyra for one by email.', l: [L.mail, L.form] } },
+    { re: /(hire|hiring|available|availability|looking for|open to|opportunit|vacanc|employ|job|work with (you|her)|work together)/,
+      a: { t: 'Nuyra is finishing her final year and is open to conversations about what comes next. Email her or send a message through the contact form.', l: [L.mail, L.form] } },
+    { re: /(contact|e-?mail|reach|get in touch|message|phone|number|call|whatsapp)/,
+      a: { t: 'You can email Nuyra at ' + EMAIL + ', send a message with the contact form on this page, or message her on LinkedIn. No phone number is listed here.', l: [L.mail, L.form, L.linkedin] } },
+    { re: /(attendance|iot|biometric|fingerprint)/,
+      a: { t: 'The IoT biometric attendance system is a fingerprint-based attendance system on IoT hardware. Someone places a finger on the reader, the device identifies them, and their attendance is logged automatically.', l: [L.work] } },
+    { re: /(mzansi|travel)/,
+      a: { t: 'Mzansi Travel is an AI chatbot for exploring South Africa. You ask in plain language and get ideas for where to go, when to travel and how to spend your days.', l: [L.work] } },
+    { re: /(care ?connect|healthcare|health|medical|emergency|first responder)/,
+      a: { t: 'CareConnect is a healthcare and emergency access web app. You can book appointments online and reach first responders with one tap. It\'s live on the web.', l: [L.care, L.work] } },
+    { re: /(flowdesk|saas|booking|dashboard)/,
+      a: { t: 'FlowDesk is a modern SaaS platform that helps service-based businesses manage bookings, customers, staff, services and daily operations from one dashboard.', l: [L.work] } },
+    { re: /(tone ?wise|sentiment|vader|roberta|ocr)/,
+      a: { t: 'ToneWise is an in-browser sentiment analysis tool for reviews and comments. It uses VADER and a local RoBERTa transformer, with OCR intake and zero-server privacy.', l: [L.tonelive, L.tonewise] } },
+    { re: /(enrol|student management|swing|client.?server)/,
+      a: { t: 'The Student Enrollment Management System is a role-based client-server app for students and administrators, built with Java and Java Swing. It enables module enrollment and administrative management functions, with a database and role-based access control.', l: [L.enrol] } },
+    { re: /(project|portfolio|built|build|made|chatbot|apps?)\b/,
+      a: { t: 'Nuyra\'s projects include an IoT biometric attendance system, the Mzansi Travel AI chatbot, FlowDesk (a SaaS platform for service businesses), CareConnect (a healthcare and emergency access app), ToneWise (a sentiment analysis tool) and a Student Enrollment Management System.', l: [L.work, L.github] } },
+    { re: /(skill|tech stack|stack|technolog|language|framework|tools|proficient|good at|experience with|know)/,
+      a: { t: 'Programming languages: Java and Java Swing, HTML, CSS, JavaScript and SQL. Databases: MySQL, SQL database design, JDBC integration, and data capturing, modelling and management. Tools: VS Code, NetBeans, IntelliJ IDEA, MySQL Workbench, Git and GitHub. Technologies: client-server architecture, input validation, secure coding, REST API integration, object-oriented programming and Spring Boot.', l: [L.skills] } },
+    { re: /(capaciti|data academy|data analyst|internship|currently work|current job|what does she do)/,
+      a: { t: 'Nuyra is a data analyst intern in the Data Academy at Capaciti, alongside her final year of studies.' } },
+    { re: /(study|studying|student|cput|universit|degree|school|education|qualification|course|graduat|application development|final year)/,
+      a: { t: 'Nuyra is in her final year of Application Development at CPUT.' } },
+    { re: /(where.*(live|based|stay)|based|location|city|relocat|remote)/,
+      a: { t: 'Her location isn\'t listed on this site. You can ask her directly.', l: [L.mail, L.form] } },
+    { re: /(who is|about (nuyra|her)|tell me about|introduce|background|nuyra)/,
+      a: { t: 'Nuyra Swanson is a final-year Application Development student at CPUT and a data analyst intern in the Data Academy at Capaciti. She enjoys solving problems and building solutions to real-world problems.', l: [L.work] } }
+  ];
+
+  function answer(q) {
+    var text = q.toLowerCase();
+    // Questions about a specific skill
+    var found = [];
+    skillMap.forEach(function (s) { if (s[1].test(text)) found.push(s[0]); });
+    if (found.length && /(know|use|uses|skill|experience|can she|does she|proficient|work with|familiar|have)/.test(text)) {
+      return { t: 'Yes, ' + found.join(', ') + (found.length > 1 ? ' are' : ' is') + ' on Nuyra\'s skills list.', l: [L.skills] };
+    }
+    if (!found.length && otherTech.test(text) && /(know|use|uses|skill|experience|can she|does she|proficient|work with|familiar|have)/.test(text)) {
+      return { t: 'That isn\'t on the skills list published here. She may still have experience with it, so it\'s worth asking her directly.', l: [L.form, L.mail] };
+    }
+    for (var i = 0; i < intents.length; i++) { if (intents[i].re.test(text)) return intents[i].a; }
+    if (found.length) return { t: 'Nuyra lists ' + found.join(', ') + ' among her skills.', l: [L.skills] };
+    return { t: 'I don\'t have an answer to that. I only know what\'s on this site, but Nuyra can answer directly.', l: [L.form, L.mail] };
+  }
+
+  var suggestions = ['Who is Nuyra?', 'What projects has she built?', 'What are her skills?', 'How can I contact her?'];
+  var busy = false;
+
+  function add(role, text, links) {
+    var d = document.createElement('div');
+    d.className = 'msg ' + role;
+    var p = document.createElement('p'); p.textContent = text; d.appendChild(p);
+    if (links && links.length) {
+      var row = document.createElement('div'); row.className = 'msg-links';
+      links.forEach(function (l) {
+        var a = document.createElement('a'); a.textContent = l.label; a.href = l.href;
+        if (/^https?:/.test(l.href)) { a.target = '_blank'; a.rel = 'noopener'; }
+        row.appendChild(a);
+      });
+      d.appendChild(row);
+    }
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+    return d;
+  }
+
+  function ask(q) {
+    q = q.trim();
+    if (!q || busy) return;
+    busy = true;
+    chips.hidden = true;
+    add('user', q);
+    var t = document.createElement('div');
+    t.className = 'msg bot';
+    t.innerHTML = '<span class="typing" aria-label="Typing"><i></i><i></i><i></i></span>';
+    box.appendChild(t);
+    box.scrollTop = box.scrollHeight;
+    var a = answer(q);
+    setTimeout(function () { t.remove(); add('bot', a.t, a.l); busy = false; }, 650);
+  }
+
+  function renderChips() {
+    chips.innerHTML = '';
+    suggestions.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.textContent = s;
+      b.addEventListener('click', function () { ask(s); });
+      chips.appendChild(b);
+    });
+  }
+
+  function open() {
+    panel.hidden = false; root.classList.add('open'); launch.setAttribute('aria-expanded', 'true');
+    if (!box.children.length) add('bot', 'Hi, I\'m here to answer questions about Nuyra. Pick a question below or type your own.');
+    input.focus();
+  }
+  function close() {
+    panel.hidden = true; root.classList.remove('open'); launch.setAttribute('aria-expanded', 'false');
+    launch.focus();
+  }
+
+  launch.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  panel.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  panel.addEventListener('click', function (e) {
+    var a = e.target.closest('.msg-links a');
+    if (a && a.getAttribute('href').charAt(0) === '#') panel.hidden = true, root.classList.remove('open'), launch.setAttribute('aria-expanded', 'false');
+  });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = input.value; input.value = '';
+    ask(v);
+  });
+  renderChips();
+})();
